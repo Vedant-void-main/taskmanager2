@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% block title %}Edit Reminder — TaskMaster{% endblock %}
+{% block page_title %}Edit Reminder{% endblock %}
+
+{% block content %}
+<div class="form-page-wrap">
+  <div class="form-card animate-in">
+    <div class="form-card-header">
+      <i class="bi bi-bell"></i> Edit Reminder
+    </div>
+    <form method="post">
+      {% csrf_token %}
+      <div class="row g-3">
+        <div class="col-12">
+          <label class="form-label">Title</label>
+          {{ form.title }}
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Type</label>
+          {{ form.reminder_type }}
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Date</label>
+          {{ form.date }}
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Time (optional)</label>
+          {{ form.time }}
+        </div>
+        <div class="col-12">
+          <label class="form-label">Notes</label>
+          {{ form.notes }}
+        </div>
+        <div class="col-12 d-flex gap-2">
+          <button type="submit" class="btn-primary-custom">
+            <i class="bi bi-save"></i> Save Changes
+          </button>
+          <a href="/reminders/" class="btn-secondary-custom">Cancel</a>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

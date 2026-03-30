@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% block title %}Edit Task — TaskMaster{% endblock %}
+{% block page_title %}Edit Task{% endblock %}
+
+{% block content %}
+<div class="form-page-wrap">
+  <div class="form-card animate-in">
+    <div class="form-card-header">
+      <i class="bi bi-pencil-square"></i> Edit Task
+    </div>
+    <form method="post">
+      {% csrf_token %}
+      <div class="row g-3">
+        <div class="col-12">
+          <label class="form-label">Title</label>
+          {{ form.title }}
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Priority</label>
+          {{ form.priority }}
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Due Date</label>
+          {{ form.due_date }}
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Due Time</label>
+          {{ form.due_time }}
+        </div>
+        <div class="col-12">
+          <label class="form-label">Description</label>
+          {{ form.description }}
+        </div>
+        <div class="col-12 d-flex gap-2">
+          <button type="submit" class="btn-primary-custom">
+            <i class="bi bi-save"></i> Save Changes
+          </button>
+          <a href="/tasks/" class="btn-secondary-custom">Cancel</a>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
