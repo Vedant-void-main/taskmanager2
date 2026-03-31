@@ -1,0 +1,115 @@
+{% extends 'base.html' %}
+{% block title %}Tasks — TaskMaster{% endblock %}
+{% block page_title %}Tasks{% endblock %}
+
+{% block content %}
+<div class="page-layout">
+
+  <!-- ── ADD TASK FORM ── -->
+  <div class="form-card animate-in">
+    <div class="form-card-header">
+      <i class="bi bi-plus-circle"></i> New Task
+    </div>
+    <form method="post" action="/tasks/create/">
+      {% csrf_token %}
+      <div class="row g-3">
+        <div class="col-12 col-md-6">
+          {{ form.title }}
+        </div>
+        <div class="col-6 col-md-2">
+          {{ form.priority }}
+        </div>
+        <div class="col-6 col-md-2">
+          {{ form.due_date }}
+        </div>
+        <div class="col-6 col-md-2">
+          {{ form.due_time }}
+        </div>
+        <div class="col-12">
+          {{ form.description }}
+        </div>
+        <div class="col-12">
+          <button type="submit" class="btn-primary-custom">
+            <i class="bi bi-plus"></i> Add Task
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <!-- ── FILTERS ── -->
+  <div class="filter-bar animate-in" style="--delay:0.05s">
+    <div class="filter-group">
+      <span class="filter-label">Status:</span>
+      <a href="?filter=all&priority={{ filter_priority }}" class="filter-btn {% if filter_status == 'all' %}active{% endif %}">All</a>
+      <a href="?filter=pending&priority={{ filter_priority }}" class="filter-btn {% if filter_status == 'pending' %}active{% endif %}">Pending</a>
+      <a href="?filter=completed&priority={{ filter_priority }}" class="filter-btn {% if filter_status == 'completed' %}active{% endif %}">Completed</a>
+    </div>
+    <div class="filter-group">
+      <span class="filter-label">Priority:</span>
+      <a href="?filter={{ filter_status }}&priority=all" class="filter-btn {% if filter_priority == 'all' %}active{% endif %}">All</a>
+      <a href="?filter={{ filter_status }}&priority=high" class="filter-btn priority-high {% if filter_priority == 'high' %}active{% endif %}">High</a>
+      <a href="?filter={{ filter_status }}&priority=medium" class="filter-btn priority-medium {% if filter_priority == 'medium' %}active{% endif %}">Medium</a>
+      <a href="?filter={{ filter_status }}&priority=low" class="filter-btn priority-low {% if filter_priority == 'low' %}active{% endif %}">Low</a>
+    </div>
+  </div>
+
+  <!-- ── TASK LIST ── -->
+  <div class="task-list">
+    {% if tasks %}
+      {% for task in tasks %}
+      <div class="task-card animate-in {% if task.status == 'completed' %}task-completed{% endif %} {% if task.is_overdue %}task-overdue-card{% elif task.is_due_soon %}task-soon-card{% endif %}"
+           style="--delay:{{ forloop.counter0|add:1 }}00ms" data-task-id="{{ task.pk }}">
+
+        <div class="task-left">
+          <form method="post" action="/tasks/{{ task.pk }}/toggle/" class="toggle-form">
+            {% csrf_token %}
+            <button type="submit" class="task-checkbox {% if task.status == 'completed' %}checked{% endif %}" title="Toggle status">
+              {% if task.status == 'completed' %}✓{% endif %}
+            </button>
+          </form>
+          <div class="task-body">
+            <div class="task-title-row">
+              <span class="task-title">{{ task.title }}</span>
+              <span class="priority-pill priority-{{ task.priority }}">{{ task.priority }}</span>
+              {% if task.is_overdue %}<span class="badge-overdue">Overdue</span>{% endif %}
+              {% if task.is_due_soon and not task.is_overdue %}<span class="badge-soon">Due Soon</span>{% endif %}
+            </div>
+            {% if task.description %}
+            <div class="task-desc">{{ task.description }}</div>
+            {% endif %}
+            {% if task.due_date %}
+            <div class="task-meta">
+              <i class="bi bi-calendar3"></i> {{ task.due_date|date:"M d, Y" }}
+              {% if task.due_time %} at {{ task.due_time|time:"g:i A" }}{% endif %}
+            </div>
+            {% endif %}
+          </div>
+        </div>
+
+        <div class="task-actions">
+          <a href="/tasks/{{ task.pk }}/edit/" class="action-btn edit-btn" title="Edit">
+            <i class="bi bi-pencil"></i>
+          </a>
+          <form method="post" action="/tasks/{{ task.pk }}/delete/" class="delete-form">
+            {% csrf_token %}
+            <button type="submit" class="action-btn delete-btn"
+                    onclick="return confirm('Delete \'{{ task.title }}\'?')" title="Delete">
+              <i class="bi bi-trash"></i>
+            </button>
+          </form>
+        </div>
+
+      </div>
+      {% endfor %}
+    {% else %}
+      <div class="empty-full">
+        <div class="empty-big-icon">🎯</div>
+        <h3>No tasks found</h3>
+        <p>Add a task above to get started!</p>
+      </div>
+    {% endif %}
+  </div>
+
+</div>
+{% endblock %}

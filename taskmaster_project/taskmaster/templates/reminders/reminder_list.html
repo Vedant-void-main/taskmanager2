@@ -1,0 +1,105 @@
+{% extends 'base.html' %}
+{% block title %}Reminders — TaskMaster{% endblock %}
+{% block page_title %}Reminders{% endblock %}
+
+{% block content %}
+<div class="page-layout">
+
+  <!-- ── ADD REMINDER FORM ── -->
+  <div class="form-card animate-in">
+    <div class="form-card-header">
+      <i class="bi bi-bell-plus"></i> New Reminder
+    </div>
+    <form method="post" action="/reminders/create/">
+      {% csrf_token %}
+      <div class="row g-3">
+        <div class="col-12 col-md-4">
+          {{ form.title }}
+        </div>
+        <div class="col-6 col-md-2">
+          {{ form.reminder_type }}
+        </div>
+        <div class="col-6 col-md-2">
+          {{ form.date }}
+        </div>
+        <div class="col-6 col-md-2">
+          {{ form.time }}
+        </div>
+        <div class="col-12 col-md-2 d-flex align-items-end">
+          <button type="submit" class="btn-primary-custom w-100">
+            <i class="bi bi-plus"></i> Add
+          </button>
+        </div>
+        <div class="col-12">
+          {{ form.notes }}
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <!-- ── FILTERS ── -->
+  <div class="filter-bar animate-in" style="--delay:0.05s">
+    <div class="filter-group">
+      <span class="filter-label">Type:</span>
+      <a href="?type=all" class="filter-btn {% if filter_type == 'all' %}active{% endif %}">🔔 All</a>
+      <a href="?type=birthday" class="filter-btn {% if filter_type == 'birthday' %}active{% endif %}">🎂 Birthdays</a>
+      <a href="?type=anniversary" class="filter-btn {% if filter_type == 'anniversary' %}active{% endif %}">💍 Anniversaries</a>
+      <a href="?type=custom" class="filter-btn {% if filter_type == 'custom' %}active{% endif %}">⭐ Custom</a>
+    </div>
+  </div>
+
+  <!-- ── REMINDER CARDS ── -->
+  <div class="reminder-grid">
+    {% if reminders %}
+      {% for r in reminders %}
+      <div class="reminder-card animate-in reminder-{{ r.reminder_type }} {% if r.is_today %}reminder-today{% endif %}"
+           style="--delay:{{ forloop.counter0 }}00ms">
+
+        <div class="reminder-card-top">
+          <span class="reminder-big-icon">{{ r.type_icon }}</span>
+          {% if r.is_today %}
+          <span class="today-ribbon">🎉 TODAY</span>
+          {% else %}
+          <span class="days-countdown">{{ r.days_until }}d away</span>
+          {% endif %}
+        </div>
+
+        <div class="reminder-card-body">
+          <div class="reminder-card-title">{{ r.title }}</div>
+          <div class="reminder-card-type">{{ r.get_reminder_type_display }}</div>
+          <div class="reminder-card-date">
+            <i class="bi bi-calendar-heart"></i>
+            {{ r.date|date:"F d" }}
+            {% if r.time %} at {{ r.time|time:"g:i A" }}{% endif %}
+          </div>
+          {% if r.notes %}
+          <div class="reminder-card-notes">{{ r.notes }}</div>
+          {% endif %}
+        </div>
+
+        <div class="reminder-card-actions">
+          <a href="/reminders/{{ r.pk }}/edit/" class="action-btn edit-btn" title="Edit">
+            <i class="bi bi-pencil"></i>
+          </a>
+          <form method="post" action="/reminders/{{ r.pk }}/delete/" style="display:inline">
+            {% csrf_token %}
+            <button type="submit" class="action-btn delete-btn"
+                    onclick="return confirm('Delete \'{{ r.title }}\'?')" title="Delete">
+              <i class="bi bi-trash"></i>
+            </button>
+          </form>
+        </div>
+
+      </div>
+      {% endfor %}
+    {% else %}
+      <div class="empty-full">
+        <div class="empty-big-icon">🔔</div>
+        <h3>No reminders yet</h3>
+        <p>Add birthdays, anniversaries, or any special event above!</p>
+      </div>
+    {% endif %}
+  </div>
+
+</div>
+{% endblock %}

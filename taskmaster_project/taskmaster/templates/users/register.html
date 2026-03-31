@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block title %}Register — TaskMaster{% endblock %}
+{% block content %}
+<div class="auth-card">
+  <div class="auth-logo">✦ TaskMaster</div>
+  <h2 class="auth-heading">Create account</h2>
+  <p class="auth-sub">Start managing your life better</p>
+
+  <form method="post" class="auth-form">
+    {% csrf_token %}
+    {% for field in form %}
+    <div class="mb-3">
+      <label class="form-label">{{ field.label }}</label>
+      {{ field }}
+      {% if field.errors %}
+        {% for err in field.errors %}
+        <div class="field-error">{{ err }}</div>
+        {% endfor %}
+      {% endif %}
+    </div>
+    {% endfor %}
+    <button type="submit" class="btn-auth">Create Account</button>
+  </form>
+
+  <div class="auth-links">
+    Already have an account? <a href="/users/login/">Sign in</a>
+  </div>
+</div>
+{% endblock %}
