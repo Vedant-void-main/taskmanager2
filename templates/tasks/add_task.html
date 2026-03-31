@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% block title %}Add Task — Task Manager{% endblock %}
+
+{% block content %}
+<div class="form-box">
+  <h2>➕ Add New Task</h2>
+
+  <form method="post">
+    {% csrf_token %}
+
+    <label>Task Title</label>
+    {{ form.title }}
+    {% if form.title.errors %}<p class="error-msg">{{ form.title.errors|join:", " }}</p>{% endif %}
+
+    <label>Description</label>
+    {{ form.description }}
+    {% if form.description.errors %}<p class="error-msg">{{ form.description.errors|join:", " }}</p>{% endif %}
+
+    <div class="form-row">
+      <div>
+        <label>Date</label>
+        {{ form.date }}
+        {% if form.date.errors %}<p class="error-msg">{{ form.date.errors|join:", " }}</p>{% endif %}
+      </div>
+      <div>
+        <label>Time</label>
+        {{ form.time }}
+        {% if form.time.errors %}<p class="error-msg">{{ form.time.errors|join:", " }}</p>{% endif %}
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" class="btn-primary" style="width:auto; padding: 11px 32px;">Save Task</button>
+      <a href="/dashboard/" class="btn-secondary">Cancel</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

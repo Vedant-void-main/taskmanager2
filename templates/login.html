@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block title %}Login — Task Manager{% endblock %}
+
+{% block content %}
+<div class="auth-box">
+  <div class="auth-logo">📋</div>
+  <h2>Welcome Back</h2>
+  <p class="auth-subtitle">Login to manage your tasks</p>
+
+  <form method="post">
+    {% csrf_token %}
+
+    <label>Username</label>
+    <input type="text" name="username" required autofocus placeholder="Enter your username" />
+
+    <label>Password</label>
+    <input type="password" name="password" required placeholder="Enter your password" />
+
+    {% if form.errors %}
+      <p class="error-msg">⚠️ Invalid username or password. Try again.</p>
+    {% endif %}
+
+    <button type="submit" class="btn-primary">Login →</button>
+  </form>
+
+  <p class="auth-link">Don't have an account? <a href="/signup/">Sign up for free</a></p>
+</div>
+{% endblock %}

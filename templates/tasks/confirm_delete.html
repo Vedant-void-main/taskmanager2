@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block title %}Delete Task — Task Manager{% endblock %}
+
+{% block content %}
+<div class="form-box">
+  <div class="delete-icon">🗑️</div>
+  <h2>Delete Task</h2>
+
+  <div class="warning-box">
+    ⚠️ You are about to delete: <strong>"{{ task.title }}"</strong>. This action cannot be undone.
+  </div>
+
+  <form method="post">
+    {% csrf_token %}
+    <div class="form-actions">
+      <button type="submit" class="btn-danger" style="width:auto; padding: 11px 28px;">Yes, Delete It</button>
+      <a href="/dashboard/" class="btn-secondary">Cancel</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

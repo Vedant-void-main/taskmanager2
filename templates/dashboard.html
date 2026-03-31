@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+{% block title %}Dashboard — Task Manager{% endblock %}
+
+{% block content %}
+
+<h2 class="page-title">📋 My Tasks</h2>
+
+<!-- Summary Cards -->
+<div class="stats-row">
+  <div class="stat-card">
+    <span class="stat-icon">📁</span>
+    <div class="stat-number">{{ total }}</div>
+    <div class="stat-label">Total Tasks</div>
+  </div>
+  <div class="stat-card">
+    <span class="stat-icon">✅</span>
+    <div class="stat-number">{{ completed }}</div>
+    <div class="stat-label">Completed</div>
+  </div>
+  <div class="stat-card">
+    <span class="stat-icon">⏳</span>
+    <div class="stat-number">{{ pending }}</div>
+    <div class="stat-label">Pending</div>
+  </div>
+  <div class="stat-card">
+    <span class="stat-icon">📊</span>
+    <div class="stat-number">{{ percentage }}%</div>
+    <div class="stat-label">Completed</div>
+  </div>
+</div>
+
+<!-- Filter Bar -->
+<div class="filter-bar">
+  <span class="filter-label-text">Filter:</span>
+  <a href="?filter=all"       class="filter-btn {% if filter_type == 'all' %}active{% endif %}">🔘 All</a>
+  <a href="?filter=pending"   class="filter-btn {% if filter_type == 'pending' %}active{% endif %}">⏳ Pending</a>
+  <a href="?filter=completed" class="filter-btn {% if filter_type == 'completed' %}active{% endif %}">✅ Completed</a>
+  <a href="?filter=today"     class="filter-btn {% if filter_type == 'today' %}active{% endif %}">📅 Today</a>
+  <a href="/tasks/add/" class="btn-add-task">➕ Add New Task</a>
+</div>
+
+<!-- Task Table -->
+{% if tasks %}
+<div class="task-table-wrapper">
+  <table class="task-table">
+    <thead>
+      <tr>
+        <th>Title</th>
+        <th>Description</th>
+        <th>Date</th>
+        <th>Time</th>
+        <th>Status</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for task in tasks %}
+      <tr class="{% if task.is_completed %}row-done{% endif %}">
+        <td class="task-title-cell">{{ task.title }}</td>
+        <td>{{ task.description|default:"—" }}</td>
+        <td>{{ task.date }}</td>
+        <td>{{ task.time }}</td>
+        <td>
+          {% if task.is_completed %}
+            <span class="badge green">✓ Done</span>
+          {% else %}
+            <span class="badge orange">⏳ Pending</span>
+          {% endif %}
+        </td>
+        <td class="action-cell">
+          <form method="post" action="/tasks/complete/{{ task.pk }}/" style="display:inline;">
+            {% csrf_token %}
+            {% if task.is_completed %}
+              <button type="submit" class="btn-sm grey">↩ Undo</button>
+            {% else %}
+              <button type="submit" class="btn-sm green">✓ Done</button>
+            {% endif %}
+          </form>
+          <a href="/tasks/delete/{{ task.pk }}/" class="btn-sm red">🗑 Delete</a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+{% else %}
+<div class="empty-msg">
+  <div class="empty-icon">🎯</div>
+  <p>No tasks found. <a href="/tasks/add/">Add your first task →</a></p>
+</div>
+{% endif %}
+
+{% endblock %}
